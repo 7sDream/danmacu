@@ -9,7 +9,7 @@ Bilibili 直播弹幕姬。
 ```bash
 pipenv install
 pipenv shell
-env DANMACU_APPKEY="" DANMACU_SECRET="" python -m danmaku.main <房间号>
+env DANMACU_APPKEY="" DANMACU_SECRET="" python -m danmacu.main <房间号>
 ```
 
 然后会显示一个 URL，使用浮动窗口工具打开这个网页即可。
