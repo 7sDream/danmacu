@@ -26,7 +26,7 @@ class APIClient:
 
     def __sign(self, query: Dict[str, str]) -> str:
         message = sorted(
-            [f'{quote(k)}={quote(v)}' for k, v in query.items()])
+            [f'{quote(k)}={quote(v)}' for k, v in query.items()]).join("&")
         return hashlib.md5(f'{message}{self._secret}'.encode('utf8'))
 
     @staticmethod
