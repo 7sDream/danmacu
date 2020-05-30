@@ -41,7 +41,7 @@ const newDanmakuLine = (danmaku) => {
     user.textContent = danmaku.user;
     fragment.appendChild(user);
 
-    fragment.appendChild(document.createTextNode(": "));
+    fragment.appendChild(document.createTextNode("："));
 
     const message = document.createElement("span");
     message.classList.add("message");
@@ -59,7 +59,7 @@ const newGiftLine = (gift) => {
     user.textContent = gift.user;
     fragment.appendChild(user);
 
-    fragment.appendChild(document.createTextNode(`: 赠送${gift.name} x${gift.count}`));
+    fragment.appendChild(document.createTextNode(`：赠送 ${gift.name} x${gift.count}`));
 
     return fragment;
 };
@@ -76,6 +76,12 @@ const newObserver = () => {
 }
 
 let autoRemoveObserver = newObserver();
+
+ws.onopen = () => {
+    const li = document.createElement("li");
+    li.textContent = "连接房间成功！";
+    messages.appendChild(li);
+};
 
 ws.onmessage = (event) => {
 
@@ -97,6 +103,16 @@ ws.onmessage = (event) => {
     li.scrollIntoView();
 };
 
+ws.onerror = (error) => {
+    console.error(error);
+};
+
+ws.onclose = (_) => {
+    const li = document.createElement("li");
+    li.textContent = "连接失败，请检查程序是否已启动并刷新页面";
+    messages.appendChild(li);
+};
+
 setInterval(() => {
     autoRemoveObserver.disconnect();
 
@@ -109,7 +125,3 @@ setInterval(() => {
         autoRemoveObserver.observe(li);
     });
 }, 500);
-
-ws.onerror = (error) => {
-    console.error(error)
-};

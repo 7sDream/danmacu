@@ -16,9 +16,9 @@
 ## 使用
 
 ```bash
-pipenv install
-pipenv shell
-python -m danmacu.main <房间号>
+$ pipenv install
+$ pipenv shell
+$ python -m danmacu.main <房间号>
 Danmaku page: http://127.0.0.1:7777/index.html
 Press Command+C to stop...
 ```
