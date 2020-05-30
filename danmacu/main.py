@@ -4,6 +4,8 @@ import json
 import os
 import sys
 
+import websockets
+
 from .command import Danmaku, Gift
 from .danmaku_client import DanmakuClient
 from .debug import CommandLineOutputDanmakuClient
@@ -35,6 +37,9 @@ def main():
 
     dc = kls(appkey, secret, room_id)
     asyncio.get_event_loop().run_until_complete(dc.start())
+
+    # do not stop
+    print("stop")
 
 
 if __name__ == "__main__":

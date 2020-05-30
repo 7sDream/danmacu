@@ -42,20 +42,20 @@ class DanmakuWebsocketClient:
                         try:
                             if packet.packet_type == PacketType.ENTER_ROOM_RESPONSE:
                                 result = packet.content["code"] == 0
-                                if client.on_enter_room(result, packet.content) is False:
+                                if await client.on_enter_room(result, packet.content) is False:
                                     ws.close()
                                     return
                             elif packet.packet_type == PacketType.COMMAND:
-                                client._on_ws_command_callback(packet.content)
+                                await client._on_ws_command_callback(packet.content)
                         except:
                             traceback.print_exc()
                             pass
                 except websockets.ConnectionClosed as e:
                     heart_beat_task.cancel()
-                    client.on_close(e)
+                    await client.on_close(e)
                     break
                 except Exception as e:
-                    client.on_error(e)
+                    await client.on_error(e)
 
     async def start(self, client: 'DanmakuClient'):
         await DanmakuWebsocketClient.__worker(client, self._room)
@@ -76,10 +76,10 @@ class DanmakuClient(abc.ABC):
                 room = api.init_room(room_id)
                 break
             except Exception as e:
-                if self.on_init_room(False, e) is False:
+                if await self.on_init_room(False, e) is False:
                     return
 
-        self.on_init_room(True, room)
+        await self.on_init_room(True, room)
 
         ws = DanmakuWebsocketClient(room)
 
@@ -88,35 +88,35 @@ class DanmakuClient(abc.ABC):
     async def start(self):
         await self.__worker(self._appkey, self._secret, self._room_id)
 
-    def _on_ws_command_callback(self, command: object):
+    async def _on_ws_command_callback(self, command: object):
         cmd = command["cmd"]
         if cmd == CommandType.DANMAKU.value:
-            self.on_danmaku(Danmaku(command["info"]))
+            await self.on_danmaku(Danmaku(command["info"]))
         elif cmd == CommandType.GIFT.value:
-            self.on_gift(Gift(command["data"]))
+            await self.on_gift(Gift(command["data"]))
         else:
             print(json.dumps(command, ensure_ascii=False))
 
     @abc.abstractmethod
-    def on_init_room(self, result: bool, extra: str):
+    async def on_init_room(self, result: bool, extra: str):
         pass
 
     @abc.abstractmethod
-    def on_enter_room(self, result: bool, extra: object):
+    async def on_enter_room(self, result: bool, extra: object):
         pass
 
     @abc.abstractmethod
-    def on_danmaku(self, danmaku: object):
+    async def on_danmaku(self, danmaku: object):
         pass
 
     @abc.abstractmethod
-    def on_gift(self, gift: object):
+    async def on_gift(self, gift: object):
         pass
 
     @abc.abstractmethod
-    def on_error(self, error):
+    async def on_error(self, error):
         pass
 
     @abc.abstractmethod
-    def on_close(self, error):
+    async def on_close(self, error):
         pass
