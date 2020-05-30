@@ -25,13 +25,13 @@ class APIClient:
         self._init_time = round(time.time())
 
     def __sign(self, query: Dict[str, str]) -> str:
-        message = '&'.join(sorted(
-            [f'{quote(k)}={quote(v)}' for k, v in query.items()]))
-        return hashlib.md5(f'{message}{self._secret}'.encode('utf8'))
+        message = "&".join(sorted(
+            [f"{quote(k)}={quote(v)}" for k, v in query.items()]))
+        return hashlib.md5(f"{message}{self._secret}".encode("utf8"))
 
     @staticmethod
     def __api_url(path: str) -> str:
-        return f'{API_PREFIX}{path}'
+        return f"{API_PREFIX}{path}"
 
     def __call_api(self, path: str, query: Dict[str, str], headers: Dict[str, str] = None) -> Dict[str, any]:
         if headers is None:

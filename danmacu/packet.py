@@ -27,7 +27,7 @@ class Packet:
         self.content = content
 
     @classmethod
-    def EnterRoom(cls, room: RoomInfo) -> 'Self':
+    def EnterRoom(cls, room: RoomInfo) -> "Self":
         return Packet(PacketType.ENTER_ROOM, json.dumps({
             "uid": room.user_id,
             "roomid": room.room_id,
@@ -35,11 +35,11 @@ class Packet:
         }, ensure_ascii=False))
 
     @classmethod
-    def HeartBeat(cls) -> 'Self':
-        return Packet(PacketType.HEARTBEAT, '[object Object]')
+    def HeartBeat(cls) -> "Self":
+        return Packet(PacketType.HEARTBEAT, "[object Object]")
 
     @classmethod
-    def parse_one(cls, message: bytes, offset=0) -> 'Self':
+    def parse_one(cls, message: bytes, offset=0) -> "Self":
         (total_length, header_length, short_tag, packet_type,
          tag) = struct.unpack_from(">ihhii", message, offset)
         content_start = offset + header_length
@@ -48,7 +48,7 @@ class Packet:
         return Packet(PacketType(packet_type), content, short_tag, tag)
 
     @classmethod
-    def parse(cls, message: bytes) -> Iterable['Self']:
+    def parse(cls, message: bytes) -> Iterable["Self"]:
         offset = 0
         msg_length = len(message)
         while offset < msg_length:
@@ -60,7 +60,7 @@ class Packet:
                 packet.content = struct.unpack(">i", packet.content)
                 yield packet
             else:
-                packet.content = json.loads(packet.content.decode('utf8'))
+                packet.content = json.loads(packet.content.decode("utf8"))
                 yield packet
 
     def encode(self) -> bytes:

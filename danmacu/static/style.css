@@ -1,0 +1,68 @@
+html {
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+body {
+    font-family: "Sarasa UI SC", "sans";
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+}
+
+ul {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    position: absolute;
+    bottom: 0;
+    height: auto;
+    width: 100%;
+}
+
+li {
+    list-style: none;
+    margin-left: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+li:last-child {
+    margin-bottom: 0;
+}
+
+.badge {
+    margin-right: 0.5em;
+}
+
+.badge-name {
+    padding: 0 0.2em;
+    color: white;
+    border-radius: 0.1em 0 0 0.1em;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.badge-level {
+    padding: 0 0.2em;
+    background-color: white;
+    color: black;
+    border-radius: 0 0.1em 0.1em 0;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.user-level {
+    padding: 0 0.2em;
+    background-color: white;
+    border-style: solid;
+    border-radius: 0.1em;
+    border-width: 1px;
+    margin-right: 0.5em;
+}
+
+.message {
+    overflow-wrap: anywhere;
+    word-wrap: break-all;
+    line-height: 1.5em;
+}

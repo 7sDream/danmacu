@@ -9,7 +9,7 @@ import websockets
 from .command import Danmaku, Gift
 from .danmaku_client import DanmakuClient
 from .debug import CommandLineOutputDanmakuClient
-from .server import DanmakuClientAsWebsocketServer
+from .server import LocalDanmakuWebsocketServer, LocalHTTPServer
 
 
 def main():
@@ -28,18 +28,25 @@ def main():
 
     room_id = int(sys.argv[1])
 
-    kls = None
-    if len(sys.argv) >= 3 and sys.argv[2] == '--debug':
-        kls = CommandLineOutputDanmakuClient
+    debug = False
+    if len(sys.argv) >= 3 and sys.argv[2] == "--debug":
+        debug = True
+
+    tasks = []
+
+    if debug:
+        client = CommandLineOutputDanmakuClient(appkey, secret, room_id)
+        tasks.append(client.start())
     else:
-        kls = functools.partial(
-            DanmakuClientAsWebsocketServer, "127.0.0.1", 5678)
+        websocket_server = LocalDanmakuWebsocketServer(
+            "127.0.0.1", 7778, appkey, secret, room_id)
+        http_server = LocalHTTPServer("127.0.0.1", 7777)
+        tasks.append(websocket_server.start())
+        tasks.append(http_server.start())
+        print("Danmaku page: http://127.0.0.1:7777/index.html")
+        print("Press Command+C to stop...")
 
-    dc = kls(appkey, secret, room_id)
-    asyncio.get_event_loop().run_until_complete(dc.start())
-
-    # do not stop
-    print("stop")
+    asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
 
 if __name__ == "__main__":

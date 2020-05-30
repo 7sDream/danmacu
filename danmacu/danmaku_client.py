@@ -28,7 +28,7 @@ class DanmakuWebsocketClient:
             await Packet.HeartBeat().send_to(ws)
 
     @staticmethod
-    async def __worker(client: 'DanmakuClient', room: RoomInfo):
+    async def __worker(client: "DanmakuClient", room: RoomInfo):
         async with websockets.connect(DANMAKU_FULL_URL) as ws:
             await Packet.EnterRoom(room).send_to(ws)
             # do not await, let it run in backend
@@ -57,7 +57,7 @@ class DanmakuWebsocketClient:
                 except Exception as e:
                     await client.on_error(e)
 
-    async def start(self, client: 'DanmakuClient'):
+    async def start(self, client: "DanmakuClient"):
         await DanmakuWebsocketClient.__worker(client, self._room)
 
 
@@ -94,8 +94,9 @@ class DanmakuClient(abc.ABC):
             await self.on_danmaku(Danmaku(command["info"]))
         elif cmd == CommandType.GIFT.value:
             await self.on_gift(Gift(command["data"]))
-        else:
-            print(json.dumps(command, ensure_ascii=False))
+        # # If you want see other commands, uncomment bellow
+        # else:
+        #     print(json.dumps(command, ensure_ascii=False))
 
     @abc.abstractmethod
     async def on_init_room(self, result: bool, extra: str):

@@ -12,11 +12,11 @@ class CommandLineOutputDanmakuClient(DanmakuClient):
         print("enter room:", "succ" if result else "failed")
 
     async def on_danmaku(self, danmaku: Danmaku):
-        badge = f'[{danmaku.badge} {danmaku.badge_level}]' if danmaku.badge is not None else ''
-        print(f'{badge}[UL {danmaku.level}]{danmaku.user}: {danmaku.message}')
+        badge = f"[{danmaku.badge} {danmaku.badge_level}]" if danmaku.badge is not None else ""
+        print(f"{badge}[UL {danmaku.level}]{danmaku.user}: {danmaku.message}")
 
     async def on_gift(self, gift: Gift):
-        print(f'{gift.user} 赠送了 {gift.name} x {gift.count}')
+        print(f"{gift.user} 赠送了 {gift.name} x {gift.count}")
 
     async def on_error(self, error):
         print("error:", error)
