@@ -37,9 +37,11 @@ def main():
     appkey = os.getenv("DANMACU_APPKEY")
     secret = os.getenv("DANMACU_SECRET")
 
-    if appkey is None or secret is None:
-        print("Please set your DANMACU_APPKEY and DANMACU_APPKEY enviroment var")
-        exit(1)
+    if appkey is None:
+        appkey = ""
+
+    if secret is None:
+        secret = ""
 
     if len(sys.argv) < 2 or sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print(f"usage: {sys.argv[0]} <room_id>")
