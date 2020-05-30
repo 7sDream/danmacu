@@ -9,6 +9,7 @@ from typing import Type
 import websocket
 
 from .api_client import APIClient, RoomInfo
+from .command import CommandType, Danmaku, Gift
 from .packet import Packet, PacketType
 from .values import DANMAKU_FULL_URL
 
@@ -96,7 +97,11 @@ class DanmakuClient(abc.ABC):
 
     @classmethod
     def _on_ws_command_callback(cls, command: object):
-        cls.on_danmaku(command)
+        cmd = command["cmd"]
+        if cmd == CommandType.DANMAKU.value:
+            cls.on_danmaku(Danmaku(command["info"]))
+        elif cmd == CommandType.GIFT.value:
+            cls.on_gift(Gift(command["data"]))
 
     @abc.abstractclassmethod
     def on_init_room(cls, result: bool, extra: str):

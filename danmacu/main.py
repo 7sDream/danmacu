@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from .command import Danmaku, Gift
 from .danmaku_client import DanmakuClient
 
 
@@ -17,12 +18,13 @@ class CommandLineOutputDanmakuClient(DanmakuClient):
         print("enter room:", "succ" if result else "failed")
 
     @classmethod
-    def on_danmaku(cls, danmaku: object):
-        print("danmaku:", json.dumps(danmaku, ensure_ascii=False))
+    def on_danmaku(cls, danmaku: Danmaku):
+        badge = f'[{danmaku.badge} {danmaku.badge_level}]' if danmaku.badge is not None else ''
+        print(f'{badge}[UL {danmaku.level}]{danmaku.user}: {danmaku.message}')
 
     @classmethod
-    def on_gift(cls, gift: object):
-        print("gift:", json.dumps(gift, ensure_ascii=False))
+    def on_gift(cls, gift: Gift):
+        print(f'{gift.user} 赠送了 {gift.name} x {gift.count}')
 
     @classmethod
     def on_error(cls, error):
