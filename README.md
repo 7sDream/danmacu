@@ -2,11 +2,13 @@
 
 写来给自己用的 Bilibili 直播弹幕姬。
 
-几个小时写出来的，我好久没写过 Python 了，代码质量奇差，什么项目架构设计，优雅错误处理啊都不存在，就图一梭子能跑就行，千万不要看。
+几个小时写出来的，我好久没写过 Python 了，代码质量奇差。什么项目架构设计，优雅错误处理啊都不存在，就图一梭子能跑就行，千万不要看实现代码。
 
 ## 预览
 
 ![preview]
+
+右下角那个就是。
 
 ## 依赖
 
@@ -15,7 +17,7 @@
 
 ## 使用
 
-```bash
+```sh
 $ pipenv install
 $ pipenv shell
 $ python -m danmacu.main <房间号>
@@ -27,11 +29,13 @@ Press Command+C to stop...
 
 ## 工作原理
 
-程序会使用 Bilibili Android 客户端的直播 API，连接 B 站的弹幕 WebSocket 服务器，并启动本地 WebSocket 服务器和 HTTP 服务器。
+使用的是 Bilibili Android 客户端的直播 API。
 
-成功进入房间后，程序会将 B 站 WebSocket 服务器返回的弹幕，送礼等信息发送给连接到本地 WebSocket 服务器的客户端。
+在连接 B 站的弹幕 WebSocket 服务器后，会启动本地 WebSocket 服务器和 HTTP 服务器。
 
-而打开终端里的 URL，本地 HTTP 服务输出的页面上的 Javascript 会连接本地 WebSocket 服务器，进而并把弹幕内容显示在页面上。
+程序会将 B 站 WebSocket 服务器返回的弹幕，送礼等信息解析成易处理的格式，发送给连接到本地 WebSocket 服务器的客户端。
+
+而打开终端里的 URL，本地 HTTP 服务输出的页面上的 Javascript 会连接本地 WebSocket 服务器，并把弹幕内容显示在页面上。
 
 配合一些全局浮动窗口工具打开这个本地 HTTP 端口，就可以当一个弹幕姬用了。
 
@@ -80,7 +84,7 @@ Press Command+C to stop...
 
 ### 2. 名字是什么意思
 
-给 macOs 用的弹幕（Danmaku）姬 ==> Dan**Mac**U
+给 **mac**OS 用的弹幕（Danmaku）姬 ==> Dan**Mac**U
 
 没有什么其他意思。
 
