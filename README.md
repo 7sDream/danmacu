@@ -88,13 +88,15 @@ Press Command+C to stop...
 
 没有什么其他意思。
 
-### 3. 为什么不用 chat.bilisc.com
+### 3. 为什么不用 blivechat/bilibili-live-chat/BiliChat/或其他类似项目
 
-我写到一半才知道有这个网站。
+[bilibili-live-chat][bilibili-live-chat-github]、[BiliChat][BiliChat-github] 这两个我写之前确实不知道。
 
-不过这个网站看样子是给 OBS 用的，CSS 是额外生成，然后填在 OBS 的浏览器源的参数里。
+不用 [blivechat][blivechat-github] 的主要原因是我只知道 [chat.bilisc.com](https://chat.bilisc.com/) 这个网站，然后看这个网站好像是给 OBS 用的，CSS 是额外生成，然后填在 OBS 的浏览器源的参数里。
 
-而我的需求需要自己放桌面上看，CSS 必须有办法自己定义，所以倒也不算白写。
+而我的主要需求是自己放桌面上看，必须有办法用 OBS 以外的方法来改 CSS，所以就以为没法满足需求。
+
+后来快写完才发现原来 blivechat 是开源的，而且可以本地跑，惨 我 惨。
 
 ### 4. 只能 Mac 用吗
 
@@ -110,7 +112,9 @@ Press Command+C to stop...
 
 什么舰长，SC，房管，VIP，彩色弹幕之类的花里胡哨的功能我都用不到。
 
-不过你想加可以随意 Fork 加上，如果愿意 PR 回我这里我也欢迎。
+如果你需要这些功能的话，建议使用 Q&A No.3 的提到的这些功能比较全的项目。
+
+不过你要是实在想自己加，那也可以随意 Fork 加上，如果愿意 PR 回我这里我也欢迎。
 
 ### 6. 浮动窗口工具是啥
 
@@ -131,10 +135,24 @@ Press Command+C to stop...
 - [ ] 自定义监听端口（自己用也没啥改的需求）
 - [ ] 参数自定义 style（现在如果想改就直接改代码里的了）
 
+## 致谢
+
+除 Pipfile 中的依赖项目以外，还要感谢以下项目的帮助：
+
+- [mitmproxy][mitmproxy-homepage]
+- [bilibili-api][bilibili-api-github]
+- [blivedm][blivedm-github]
+
 ## LICENSE
 
 WTFPL
 
 [preview]: https://rikka.7sdre.am/files/a3412e57-c1f2-4de6-90c5-afc0b75166bb.png
 [danmuku-homepage]: https://www.danmaku.live/
+[bilibili-live-chat-github]: https://github.com/Tsuk1ko/bilibili-live-chat
+[BiliChat-github]: https://github.com/3Shain/BiliChat
+[blivechat-github]: https://github.com/xfgryujk/blivechat
 [helium3-github]: https://github.com/slashlos/Helium
+[mitmproxy-homepage]: https://mitmproxy.org/
+[bilibili-api-github]: https://github.com/czp3009/bilibili-api
+[blivedm-github]: https://github.com/xfgryujk/blivedm
