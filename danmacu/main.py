@@ -1,38 +1,13 @@
+import asyncio
+import functools
 import json
 import os
 import sys
 
 from .command import Danmaku, Gift
 from .danmaku_client import DanmakuClient
-
-
-class CommandLineOutputDanmakuClient(DanmakuClient):
-    @classmethod
-    def on_init_room(cls, result: bool, extra: str):
-        print("init room:", "succ" if result else f"failed: {extra}")
-        if result is False:
-            return False  # do not retry
-
-    @classmethod
-    def on_enter_room(cls, result: bool, extra: object):
-        print("enter room:", "succ" if result else "failed")
-
-    @classmethod
-    def on_danmaku(cls, danmaku: Danmaku):
-        badge = f'[{danmaku.badge} {danmaku.badge_level}]' if danmaku.badge is not None else ''
-        print(f'{badge}[UL {danmaku.level}]{danmaku.user}: {danmaku.message}')
-
-    @classmethod
-    def on_gift(cls, gift: Gift):
-        print(f'{gift.user} 赠送了 {gift.name} x {gift.count}')
-
-    @classmethod
-    def on_error(cls, error):
-        print("error:", error)
-
-    @classmethod
-    def on_close(cls, error):
-        print("close", error)
+from .debug import CommandLineOutputDanmakuClient
+from .server import DanmakuClientAsWebsocketServer
 
 
 def main():
@@ -51,9 +26,15 @@ def main():
 
     room_id = int(sys.argv[1])
 
-    dc = CommandLineOutputDanmakuClient(appkey, secret, room_id)
+    kls = None
+    if len(sys.argv) >= 3 and sys.argv[2] == '--debug':
+        kls = CommandLineOutputDanmakuClient
+    else:
+        kls = functools.partial(
+            DanmakuClientAsWebsocketServer, "127.0.0.1", 5678)
 
-    dc.start()
+    dc = kls(appkey, secret, room_id)
+    asyncio.get_event_loop().run_until_complete(dc.start())
 
 
 if __name__ == "__main__":

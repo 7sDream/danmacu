@@ -5,7 +5,7 @@ import traceback
 import zlib
 from typing import Dict, Iterable, List, Union
 
-import websocket
+import websockets
 
 from .api_client import RoomInfo
 
@@ -20,7 +20,7 @@ class PacketType(enum.Enum):
 
 
 class Packet:
-    def __init__(self, short_tag: int, packet_type: PacketType, tag: int, content: Union[int, str]):
+    def __init__(self, packet_type: PacketType, content: Union[int, str], short_tag: int = 1, tag: int = 1):
         self._short_tag = short_tag
         self.packet_type = packet_type
         self._tag = tag
@@ -28,11 +28,15 @@ class Packet:
 
     @classmethod
     def EnterRoom(cls, room: RoomInfo) -> 'Self':
-        return Packet(1, PacketType.ENTER_ROOM, 1, json.dumps({
+        return Packet(PacketType.ENTER_ROOM, json.dumps({
             "uid": room.user_id,
             "roomid": room.room_id,
             "protover": 0,
         }, ensure_ascii=False))
+
+    @classmethod
+    def HeartBeat(cls) -> 'Self':
+        return Packet(PacketType.HEARTBEAT, '[object Object]')
 
     @classmethod
     def parse_one(cls, message: bytes, offset=0) -> 'Self':
@@ -41,7 +45,7 @@ class Packet:
         content_start = offset + header_length
         content_end = offset + total_length
         content = message[content_start:content_end]
-        return Packet(short_tag, PacketType(packet_type), tag, content)
+        return Packet(PacketType(packet_type), content, short_tag, tag)
 
     @classmethod
     def parse(cls, message: bytes) -> Iterable['Self']:
@@ -72,5 +76,5 @@ class Packet:
         header.extend(buffer)
         return header
 
-    def send_to(self, ws: websocket.WebSocket):
-        ws.send(self.encode(), websocket.ABNF.OPCODE_BINARY)
+    async def send_to(self, ws: websockets.WebSocketClientProtocol):
+        await ws.send(self.encode())

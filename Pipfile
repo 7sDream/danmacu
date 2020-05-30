@@ -9,7 +9,7 @@ autopep8 = "*"
 
 [packages]
 requests = "*"
-websocket-client = "*"
+websockets = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,12 +1,15 @@
 import abc
+import asyncio
 import enum
+import json
 import ssl
 import threading
+import time
 import traceback
 from functools import partial
 from typing import Type
 
-import websocket
+import websockets
 
 from .api_client import APIClient, RoomInfo
 from .command import CommandType, Danmaku, Gift
@@ -19,50 +22,43 @@ class DanmakuWebsocketClient:
         self._room = room
 
     @staticmethod
-    def on_open(room: RoomInfo, ws: websocket.WebSocket):
-        Packet.EnterRoom(room).send_to(ws)
+    async def _heartbeat(ws: websockets.WebSocketClientProtocol):
+        while True:
+            await asyncio.sleep(30)
+            await Packet.HeartBeat().send_to(ws)
 
     @staticmethod
-    def on_message(enter_callback, command_callback, ws: websocket.WebSocket, message):
-        for packet in Packet.parse(message):
-            try:
-                if packet.packet_type == PacketType.ENTER_ROOM_RESPONSE:
-                    result = packet.content["code"] == 0
-                    if enter_callback(result, packet.content) is False:
-                        ws.close()
-                        return
-                elif packet.packet_type == PacketType.COMMAND:
-                    command_callback(packet.content)
-            except:
-                # TODO: traceback.print_exc()
-                pass
+    async def __worker(client: 'DanmakuClient', room: RoomInfo):
+        async with websockets.connect(DANMAKU_FULL_URL) as ws:
+            await Packet.EnterRoom(room).send_to(ws)
+            # do not await, let it run in backend
+            heart_beat_task = asyncio.create_task(
+                DanmakuWebsocketClient._heartbeat(ws))
 
-    @staticmethod
-    def on_error(callback, ws, error):
-        callback(error)
+            while True:
+                try:
+                    message = await ws.recv()
+                    for packet in Packet.parse(message):
+                        try:
+                            if packet.packet_type == PacketType.ENTER_ROOM_RESPONSE:
+                                result = packet.content["code"] == 0
+                                if client.on_enter_room(result, packet.content) is False:
+                                    ws.close()
+                                    return
+                            elif packet.packet_type == PacketType.COMMAND:
+                                client._on_ws_command_callback(packet.content)
+                        except:
+                            traceback.print_exc()
+                            pass
+                except websockets.ConnectionClosed as e:
+                    heart_beat_task.cancel()
+                    client.on_close(e)
+                    break
+                except Exception as e:
+                    client.on_error(e)
 
-    @staticmethod
-    def on_close(callback, ws):
-        callback()
-
-    @staticmethod
-    def __worker(cls: Type['DanmakuClient'], room: RoomInfo) -> bool:
-        return websocket.WebSocketApp(
-            DANMAKU_FULL_URL,
-            on_open=partial(DanmakuWebsocketClient.on_open, room),
-            on_message=partial(DanmakuWebsocketClient.on_message,
-                               cls.on_enter_room,
-                               cls._on_ws_command_callback),
-            on_error=partial(DanmakuWebsocketClient.on_error, cls.on_error),
-            on_close=partial(DanmakuWebsocketClient.on_close, cls.on_close),
-        ).run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
-
-    def start(self, cls: Type['DanmakuClient']) -> threading.Thread:
-        worker = threading.Thread(target=DanmakuWebsocketClient.__worker, kwargs={
-            "cls": cls, "room": self._room
-        })
-        worker.start()
-        return worker
+    async def start(self, client: 'DanmakuClient'):
+        await DanmakuWebsocketClient.__worker(client, self._room)
 
 
 class DanmakuClient(abc.ABC):
@@ -72,8 +68,7 @@ class DanmakuClient(abc.ABC):
         self._room_id = room_id
         self._user_id = None
 
-    @classmethod
-    def __worker(cls, appkey: str, secret: str, room_id: str):
+    async def __worker(self, appkey: str, secret: str, room_id: str):
         api = APIClient(appkey, secret)
 
         while True:
@@ -81,48 +76,47 @@ class DanmakuClient(abc.ABC):
                 room = api.init_room(room_id)
                 break
             except Exception as e:
-                if cls.on_init_room(False, e) is False:
+                if self.on_init_room(False, e) is False:
                     return
 
-        cls.on_init_room(True, room)
+        self.on_init_room(True, room)
 
         ws = DanmakuWebsocketClient(room)
 
-        ws_thread = ws.start(cls)
+        await ws.start(self)
 
-        ws_thread.join()
+    async def start(self):
+        await self.__worker(self._appkey, self._secret, self._room_id)
 
-    def start(self):
-        self.__worker(self._appkey, self._secret, self._room_id)
-
-    @classmethod
-    def _on_ws_command_callback(cls, command: object):
+    def _on_ws_command_callback(self, command: object):
         cmd = command["cmd"]
         if cmd == CommandType.DANMAKU.value:
-            cls.on_danmaku(Danmaku(command["info"]))
+            self.on_danmaku(Danmaku(command["info"]))
         elif cmd == CommandType.GIFT.value:
-            cls.on_gift(Gift(command["data"]))
+            self.on_gift(Gift(command["data"]))
+        else:
+            print(json.dumps(command, ensure_ascii=False))
 
-    @abc.abstractclassmethod
-    def on_init_room(cls, result: bool, extra: str):
+    @abc.abstractmethod
+    def on_init_room(self, result: bool, extra: str):
         pass
 
-    @abc.abstractclassmethod
-    def on_enter_room(cls, result: bool, extra: object):
+    @abc.abstractmethod
+    def on_enter_room(self, result: bool, extra: object):
         pass
 
-    @abc.abstractclassmethod
-    def on_danmaku(cls, danmaku: object):
+    @abc.abstractmethod
+    def on_danmaku(self, danmaku: object):
         pass
 
-    @abc.abstractclassmethod
-    def on_gift(cls, gift: object):
+    @abc.abstractmethod
+    def on_gift(self, gift: object):
         pass
 
-    @abc.abstractclassmethod
-    def on_error(cls, error):
+    @abc.abstractmethod
+    def on_error(self, error):
         pass
 
-    @abc.abstractclassmethod
-    def on_close(cls, error):
+    @abc.abstractmethod
+    def on_close(self, error):
         pass
