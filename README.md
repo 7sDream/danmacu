@@ -33,7 +33,7 @@ Press Command+C to stop...
 
 在连接 B 站的弹幕 WebSocket 服务器后，会启动本地 WebSocket 服务器和 HTTP 服务器。
 
-程序会将 B 站 WebSocket 服务器返回的弹幕，送礼等信息解析成易处理的格式，发送给连接到本地 WebSocket 服务器的客户端。
+程序会将 B 站返回的弹幕/送礼等信息解析成易处理的格式，发送给连接到本地 WebSocket 服务器的客户端。
 
 而打开终端里的 URL，本地 HTTP 服务输出的页面上的 Javascript 会连接本地 WebSocket 服务器，并把弹幕内容显示在页面上。
 
@@ -114,7 +114,7 @@ Press Command+C to stop...
 
 ### 6. 浮动窗口工具是啥
 
-就是可以 always on top 的一个窗口，不然你焦点去别的窗口了就看不见弹幕了。
+就是可以 Always on top 的一个窗口，不然你焦点去别的窗口了就看不见弹幕了。
 
 我用的是 [Helium 3][helium3-github]，你也可以用别的，只要能支持打开网页就行。
 
