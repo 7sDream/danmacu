@@ -6,9 +6,13 @@
 
 ## 预览
 
-![preview]
+![][preview]
 
 右下角那个就是。
+
+关闭半透明的话：
+
+![][preview-non-transparent]
 
 ## 依赖
 
@@ -148,6 +152,7 @@ Press Command+C to stop...
 WTFPL
 
 [preview]: https://rikka.7sdre.am/files/a3412e57-c1f2-4de6-90c5-afc0b75166bb.png
+[preview-non-transparent]: https://rikka.7sdre.am/files/2cc074d1-b5e0-4a80-9bc6-b8a389344fd0.png
 [danmuku-homepage]: https://www.danmaku.live/
 [bilibili-live-chat-github]: https://github.com/Tsuk1ko/bilibili-live-chat
 [BiliChat-github]: https://github.com/3Shain/BiliChat
