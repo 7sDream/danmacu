@@ -24,7 +24,7 @@ class DanmakuWebsocketClient:
     @staticmethod
     async def _heartbeat(ws: websockets.WebSocketClientProtocol):
         while True:
-            await asyncio.sleep(30)
+            await asyncio.sleep(15)
             await Packet.HeartBeat().send_to(ws)
 
     @staticmethod
