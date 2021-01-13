@@ -12,7 +12,7 @@ from typing import Type
 import websockets
 
 from .api_client import APIClient, RoomInfo
-from .command import CommandType, Danmaku, Gift
+from .command import CommandType, Danmaku, Gift, InteractWord
 from .packet import Packet, PacketType
 from .values import DANMAKU_FULL_URL
 
@@ -90,10 +90,15 @@ class DanmakuClient(abc.ABC):
 
     async def _on_ws_command_callback(self, command: object):
         cmd = command["cmd"]
+        #print(command)
         if cmd == CommandType.DANMAKU.value:
             await self.on_danmaku(Danmaku(command["info"]))
         elif cmd == CommandType.GIFT.value:
             await self.on_gift(Gift(command["data"]))
+        elif cmd == CommandType.INTERACTWORD.value:
+            await self.on_interact_word(InteractWord(command['data']))
+        else:
+            pass
         # # If you want see other commands, uncomment bellow
         # else:
         #     print(json.dumps(command, ensure_ascii=False))
@@ -112,6 +117,10 @@ class DanmakuClient(abc.ABC):
 
     @abc.abstractmethod
     async def on_gift(self, gift: object):
+        pass
+
+    @abc.abstractmethod
+    async def on_interact_word(self, InteractWord: object):
         pass
 
     @abc.abstractmethod

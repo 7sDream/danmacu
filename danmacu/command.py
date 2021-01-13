@@ -6,7 +6,7 @@ import json
 class CommandType(enum.Enum):
     DANMAKU = "DANMU_MSG"
     GIFT = "SEND_GIFT"
-
+    INTERACTWORD = "INTERACT_WORD"
 
 class Command:
     def __init__(self, cmd: CommandType):
@@ -14,7 +14,6 @@ class Command:
 
     def to_json(self) -> str:
         return json.dumps(self.__dict__, ensure_ascii=False)
-
 
 class Danmaku(Command):
     def __init__(self, obj: object):
@@ -38,3 +37,10 @@ class Gift(Command):
         self.user = obj["uname"]
         self.name = obj["giftName"]
         self.count = obj["num"]
+
+class InteractWord(Command):
+    def __init__(self, obj: object):
+        super().__init__(CommandType.INTERACTWORD)
+        self.uid = obj['uid']
+        self.user = obj['uname']
+

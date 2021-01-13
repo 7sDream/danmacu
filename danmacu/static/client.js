@@ -64,6 +64,18 @@ const newGiftLine = (gift) => {
     return fragment;
 };
 
+const newInteractWord = (interact_word) => {
+    const fragment = document.createDocumentFragment();
+
+    const user = document.createElement("span");
+    user.classList.add("user");
+    user.textContent = interact_word.user;
+    fragment.appendChild(user);
+
+    fragment.appendChild(document.createTextNode(`：欢迎进入直播间`));
+    return fragment;
+}
+
 const newObserver = () => {
     return new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
@@ -96,6 +108,10 @@ ws.onmessage = (event) => {
         const gift = message
         li.classList.add("gift");
         li.appendChild(newGiftLine(gift));
+    } else if (message.cmd == "INTERACT_WORD") {
+        const interact_word = message
+        li.classList.add("interact_word");
+        li.appendChild(newInteractWord(interact_word));
     }
 
     messages.appendChild(li);
