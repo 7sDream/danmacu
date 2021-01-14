@@ -6,7 +6,7 @@ import os
 import aiohttp.web
 import websockets
 
-from .command import Danmaku, Gift
+from .command import Danmaku, Gift, InteractWord
 from .danmaku_client import DanmakuClient
 
 
@@ -67,6 +67,10 @@ class LocalDanmakuWebsocketServer(DanmakuClient):
     async def on_gift(self, gift: Gift):
         if self._ws is not None:
             await self._ws.send(gift.to_json())
+
+    async def on_interact_word(self, interact_word: InteractWord):
+        if self._ws is not None:
+            await self._ws.send(interact_word.to_json())
 
     async def on_error(self, error):
         print(error.message)
