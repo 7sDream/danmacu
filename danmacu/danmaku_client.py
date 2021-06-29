@@ -47,6 +47,9 @@ class DanmakuWebsocketClient:
                                     return
                             elif packet.packet_type == PacketType.COMMAND:
                                 await client._on_ws_command_callback(packet.content)
+                            elif packet.packet_type == PacketType.POPULARITY:
+                                await client.on_popularity(packet.content)
+                                #print("other packet_content = {}".format(packet.content))
                         except:
                             traceback.print_exc()
                             pass
@@ -109,6 +112,10 @@ class DanmakuClient(abc.ABC):
 
     @abc.abstractmethod
     async def on_enter_room(self, result: bool, extra: object):
+        pass
+
+    @abc.abstractmethod
+    async def on_popularity(self, content: object):
         pass
 
     @abc.abstractmethod

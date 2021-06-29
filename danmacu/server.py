@@ -60,6 +60,9 @@ class LocalDanmakuWebsocketServer(DanmakuClient):
     async def on_enter_room(self, result: bool, extra: object):
         pass
 
+    async def on_popularity(self, content: object):
+        print("人气 = {}".format(content[0]))
+
     async def on_danmaku(self, danmaku: Danmaku):
         if self._ws is not None:
             await self._ws.send(danmaku.to_json())
