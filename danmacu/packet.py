@@ -12,11 +12,11 @@ from .api_client import RoomInfo
 
 @enum.unique
 class PacketType(enum.Enum):
-    HEARTBEAT = 2
-    POPULARITY = 3
-    COMMAND = 5
-    ENTER_ROOM = 7
-    ENTER_ROOM_RESPONSE = 8
+    HEARTBEAT = 2  #客户端发送的心跳包
+    POPULARITY = 3 #人气 心跳包回复
+    COMMAND = 5  #消息
+    ENTER_ROOM = 7 #认证加入房间
+    ENTER_ROOM_RESPONSE = 8 #服务端发送的心跳包，客户端接收到此信息时需要返回一个心跳包
 
 
 class Packet:
