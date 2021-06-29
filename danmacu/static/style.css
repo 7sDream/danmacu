@@ -4,7 +4,10 @@ html {
 }
 
 body {
+    background-color: black;
+    color: white;
     font-family: "Sarasa UI SC", "sans";
+    font-size: 16px;
     overflow: hidden;
     height: 100%;
     margin: 0;
