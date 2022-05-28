@@ -76,7 +76,7 @@ class LocalDanmakuWebsocketServer(DanmakuClient):
             await self._ws.send(interact_word.to_json())
 
     async def on_error(self, error):
-        print(error.message)
+        print(error)
 
     async def on_close(self, error):
         if self._ws is not None:
