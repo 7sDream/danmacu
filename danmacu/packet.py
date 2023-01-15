@@ -51,7 +51,7 @@ class Packet:
     def parse(cls, message: bytes) -> Iterable["Self"]:
         offset = 0
         msg_length = len(message)
-        while offset < msg_length:
+        while offset + 16 < msg_length:
             packet = cls.parse_one(message, offset)
             offset += 16 + len(packet.content)
             if packet._short_tag == 2:
