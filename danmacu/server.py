@@ -6,7 +6,7 @@ import os
 import aiohttp.web
 import websockets
 
-from .command import Danmaku, Gift, InteractWord
+from .command import Danmaku, Gift, InteractWord, Popularity
 from .danmaku_client import DanmakuClient
 
 
@@ -61,6 +61,9 @@ class LocalDanmakuWebsocketServer(DanmakuClient):
         pass
 
     async def on_popularity(self, content: object):
+        if self._ws is not None:
+            await self._ws.send(Popularity(content[0]).to_json())
+        print(content)
         print("人气 = {}".format(content[0]))
 
     async def on_danmaku(self, danmaku: Danmaku):

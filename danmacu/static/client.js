@@ -1,6 +1,8 @@
-
+const scroll = document.getElementById("scroll");
 const messages = document.createElement("ul");
-document.body.appendChild(messages);
+scroll.appendChild(messages);
+
+let currentPopularity = 0;
 
 const ws = new WebSocket("ws://127.0.0.1:7778/");
 
@@ -112,6 +114,11 @@ ws.onmessage = (event) => {
         const interact_word = message
         li.classList.add("interact_word");
         li.appendChild(newInteractWord(interact_word));
+    } else if (message.type) {
+        if (message.type == "popularity") {
+            currentPopularity = message.count;
+            document.getElementById("popularity").textContent = currentPopularity;
+        }
     }
 
     messages.appendChild(li);
