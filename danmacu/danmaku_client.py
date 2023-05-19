@@ -93,7 +93,7 @@ class DanmakuClient(abc.ABC):
 
     async def _on_ws_command_callback(self, command: object):
         cmd = command["cmd"]
-        print(command)
+        # print(command)
         if cmd == CommandType.DANMAKU.value:
             await self.on_danmaku(Danmaku(command["info"]))
         elif cmd == CommandType.GIFT.value:

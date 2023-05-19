@@ -27,12 +27,12 @@ class LocalHTTPServer():
     async def start(self):
         await asyncio.get_event_loop().create_server(self._app.make_handler(), self._ip, self._port)
 
-ws_set = set()
 
 class LocalDanmakuWebsocketServer(DanmakuClient):
     def __init__(self, ip: str, port: int, appkey: str, secret: str, room_id: int):
         super().__init__(appkey, secret, room_id)
         self._ip = ip
+        self.clients = set()
         self._port = port
         self._server: websockets.Serve = None
 
@@ -45,15 +45,16 @@ class LocalDanmakuWebsocketServer(DanmakuClient):
         await asyncio.gather(super().start(), self.listen())
 
     async def message_all(self, message):
-        for ws in ws_set:
+        for ws in self.clients:
             await ws.send(message)
 
     async def _new_client(self, ws: websockets.WebSocketServerProtocol, path: str):
         print("New Client Enter")
-        if path == "/" and ws not in ws_set:
-            ws_set.add(ws)
+        if path == "/" and ws not in self.clients:
+            self.clients.add(ws)
             await ws.wait_closed()
             print("Client leave")
+            self.clients.remove(ws)
         else:
             await ws.close()
 
@@ -82,5 +83,5 @@ class LocalDanmakuWebsocketServer(DanmakuClient):
         print(error)
 
     async def on_close(self, error):
-        for ws in ws_set:
+        for ws in self.clients:
             await ws.close()
