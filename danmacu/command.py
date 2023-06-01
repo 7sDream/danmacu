@@ -44,3 +44,11 @@ class InteractWord(Command):
         self.uid = obj['uid']
         self.user = obj['uname']
 
+
+class Popularity():
+    def __init__(self, count: int):
+        self.type = "popularity"
+        self.count = count
+
+    def to_json(self) -> str:
+        return json.dumps(self.__dict__, ensure_ascii=False)
